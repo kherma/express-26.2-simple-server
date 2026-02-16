@@ -7,7 +7,11 @@
     You can't leave fields empty!
   {{/if}}
 </div>
-<form action='/contact/send-message' method='POST'>
+<form
+  action='/contact/send-message'
+  method='POST'
+  enctype='multipart/form-data'
+>
   <label>
     Your name:
     <input type='text' name='author' />
@@ -24,5 +28,19 @@
     Message:
     <textarea name='message'></textarea>
   </label>
+  <label>
+    Project design:
+    <input
+      required
+      type='file'
+      name='projectDesign'
+      accept='.png,.jpg,.jpeg,.gif'
+    />
+  </label>
   <button type='submit'>Send message</button>
 </form>
+{{#if isSent}}
+  {{#if fileName}}
+    <div>File {{fileName}} has been saved!</div>
+  {{/if}}
+{{/if}}

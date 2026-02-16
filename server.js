@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const hbs = require('express-handlebars');
+const multer = require('multer');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -15,6 +16,19 @@ const publicDir = path.join(__dirname, 'public');
 
 app.use(express.static(publicDir));
 app.use(express.urlencoded({ extended: false }));
+
+// multer setup: store uploaded files in memory (no disk storage)
+const storage = multer.memoryStorage();
+const allowedExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
+const fileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (allowedExtensions.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+const upload = multer({ storage, fileFilter });
 
 function requireLogin(req, res, next) {
   const loggedIn = false;
@@ -38,7 +52,8 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-  res.render('contact');
+  const { sent, file, error } = req.query;
+  res.render('contact', { isSent: !!sent, isError: !!error, fileName: file });
 });
 
 app.get('/info', (req, res) => {
@@ -52,15 +67,24 @@ app.get('/hello/:name', (req, res) => {
   res.render('hello', { layout: false, name: req.params.name });
 });
 
-app.post('/contact/send-message', (req, res) => {
-  const { author, sender, title, message } = req.body;
+app.post(
+  '/contact/send-message',
+  upload.single('projectDesign'),
+  (req, res) => {
+    const { author, sender, title, message } = req.body;
+    const file = req.file; // multer places file here when uploaded
 
-  if (author && sender && title && message) {
-    res.render('contact', { isSent: true });
-  } else {
-    res.render('contact', { isError: true });
-  }
-});
+    // validate all fields including file
+    if (author && sender && title && message && file) {
+      return res.redirect(
+        `/contact?sent=1&file=${encodeURIComponent(file.originalname)}`,
+      );
+    }
+
+    // If validation fails, redirect back with error flag (PRG)
+    return res.redirect('/contact?error=1');
+  },
+);
 
 // Catch-all 404: send local 404 page with image
 app.use((req, res) => {
