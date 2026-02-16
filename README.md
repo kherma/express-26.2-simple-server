@@ -5,8 +5,8 @@ Simple Node + Express server that serves HTML pages for routes and a local SVG i
 Run:
 
 ```bash
-npm install
-npm start
+yarn install
+yarn start
 # then open http://localhost:3000/
 ```
 
