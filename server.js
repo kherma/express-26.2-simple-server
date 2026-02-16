@@ -53,9 +53,13 @@ app.get('/hello/:name', (req, res) => {
 });
 
 app.post('/contact/send-message', (req, res) => {
-  console.log(req);
+  const { author, sender, title, message } = req.body;
 
-  res.json(req.body);
+  if (author && sender && title && message) {
+    res.render('contact', { isSent: true });
+  } else {
+    res.render('contact', { isError: true });
+  }
 });
 
 // Catch-all 404: send local 404 page with image

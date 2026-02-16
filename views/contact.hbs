@@ -1,2 +1,28 @@
-<h1>Contact</h1>
-<p>Send me an email at programmer@example.com</p>
+<h2>Contact me</h2>
+<div>
+  {{#if isSent}}
+    The message has been sent!
+  {{/if}}
+  {{#if isError}}
+    You can't leave fields empty!
+  {{/if}}
+</div>
+<form action='/contact/send-message' method='POST'>
+  <label>
+    Your name:
+    <input type='text' name='author' />
+  </label>
+  <label>
+    Your email:
+    <input type='email' name='sender' />
+  </label>
+  <label>
+    Title:
+    <input type='text' name='title' />
+  </label>
+  <label>
+    Message:
+    <textarea name='message'></textarea>
+  </label>
+  <button type='submit'>Send message</button>
+</form>
