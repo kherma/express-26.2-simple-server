@@ -14,6 +14,7 @@ app.set('view engine', '.hbs');
 const publicDir = path.join(__dirname, 'public');
 
 app.use(express.static(publicDir));
+app.use(express.urlencoded({ extended: false }));
 
 function requireLogin(req, res, next) {
   const loggedIn = false;
@@ -49,6 +50,12 @@ app.get('/history', (req, res) => {
 
 app.get('/hello/:name', (req, res) => {
   res.render('hello', { layout: false, name: req.params.name });
+});
+
+app.post('/contact/send-message', (req, res) => {
+  console.log(req);
+
+  res.json(req.body);
 });
 
 // Catch-all 404: send local 404 page with image
