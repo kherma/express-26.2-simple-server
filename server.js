@@ -36,6 +36,10 @@ app.get('/about', (req, res) => {
   return res.show('about.html');
 });
 
+app.get('/hello/:name', (req, res) => {
+  return res.send(`Hello ${req.params.name}`);
+});
+
 // Catch-all 404: send local 404 page with image
 app.use((req, res) => {
   res.status(404);
